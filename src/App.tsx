@@ -5,9 +5,10 @@ import { DietTracker } from './components/DietTracker';
 import { ProgressTracker } from './components/ProgressTracker';
 import { Analytics } from './components/Analytics';
 import { SuccessNotification } from './components/SuccessNotification';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { useAuth } from './hooks/useAuth';
 
-export default function App() {
+function App() {
   const [view, setView] = useState('dashboard');
   const [successMessage, setSuccessMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -51,26 +52,30 @@ export default function App() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen font-sans">
-        <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
-          {renderView()}
-        </div>
-        
-        {/* Success Notification */}
-        <SuccessNotification 
-          message={successMessage}
-          isVisible={showSuccess}
-          onClose={hideSuccessNotification}
-        />
-        
-        {/* Subtle background pattern */}
-        <div className="fixed inset-0 opacity-5 pointer-events-none">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 25% 25%, #ef4444 0%, transparent 50%), 
-                             radial-gradient(circle at 75% 75%, #0ea5e9 0%, transparent 50%)`,
-            backgroundSize: '100px 100px'
-          }}></div>
-        </div>
-    </div>
+    <ThemeProvider>
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen font-sans">
+          <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
+            {renderView()}
+          </div>
+          
+          {/* Success Notification */}
+          <SuccessNotification 
+            message={successMessage}
+            isVisible={showSuccess}
+            onClose={hideSuccessNotification}
+          />
+          
+          {/* Subtle background pattern */}
+          <div className="fixed inset-0 opacity-5 pointer-events-none">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 25% 25%, #ef4444 0%, transparent 50%), 
+                               radial-gradient(circle at 75% 75%, #0ea5e9 0%, transparent 50%)`,
+              backgroundSize: '100px 100px'
+            }}></div>
+          </div>
+      </div>
+    </ThemeProvider>
   );
 }
+
+export default App;
