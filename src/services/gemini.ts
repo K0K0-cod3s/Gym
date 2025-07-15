@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini API
-const API_KEY = 'AIzaSyBJxeLxwnH08rK1V0gyt-rx5rNwhGXHPZs';
+const API_KEY = 'AIzaSyBJxeLxwnH08rK1V0gyt-rx5rNwhGXHPZs'; // Replace with your actual API key
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -23,7 +23,7 @@ export const callGemini = async (prompt: string, schema?: any): Promise<string> 
 
       // Get the generative model
       const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-pro",
+        model: "gemini-1.5-flash",
         generationConfig: {
           temperature: 0.7,
           topK: 40,
