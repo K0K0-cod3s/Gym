@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db, appId } from '../config/firebase';
 import { Utensils, Dumbbell, TrendingUp, CheckCircle, Target, Flame, Activity, BarChart3, Database } from 'lucide-react';
