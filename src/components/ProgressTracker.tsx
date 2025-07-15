@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, appId } from '../config/firebase';
 import { useAuth } from '../hooks/useAuth';
-import { callGemini } from '../services/vertexai';
+import { callGemini } from '../services/gemini';
 import { useTheme } from '../contexts/ThemeContext';
 import { ViewHeader } from './ViewHeader';
 import { Card } from './Card';
