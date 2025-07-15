@@ -137,8 +137,9 @@ export const Analytics: React.FC<AnalyticsProps> = ({ setView }) => {
   const workoutFrequencyData: ChartDataPoint[] = filteredWorkouts.map(workout => ({
     date: new Date(workout.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     exercises: workout.totalExercises || 0,
-    volume: Object.values(workout.exercises || {}).reduce((total: number, sets: Array<{ weight: string; reps: string }>) => {
-      return total + sets.reduce((setTotal: number, set: { weight: string; reps: string }) => {
+    volume: Object.values(workout.exercises || {} as Record<string, Array<{ weight: string; reps: string }>>).reduce((total: number, sets) => {
+      if (!Array.isArray(sets)) return total;
+      return total + sets.reduce((setTotal: number, set) => {
         const weight = parseFloat(set.weight) || 0;
         const reps = parseFloat(set.reps) || 0;
         return setTotal + (weight * reps);
