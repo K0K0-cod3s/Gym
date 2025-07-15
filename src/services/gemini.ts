@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize Gemini API
-const API_KEY = 'AIzaSyCTjm2_op-C171gatkWLianfc0-8uX2a4A';
+const API_KEY = 'AIzaSyBJxeLxwnH08rK1V0gyt-rx5rNwhGXHPZs';
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
