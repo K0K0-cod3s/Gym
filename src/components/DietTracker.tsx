@@ -61,13 +61,43 @@ export const DietTracker: React.FC<DietTrackerProps> = ({ setView, onSuccess }) 
     return () => unsubscribe();
   }, [userId, today]);
 
+  // const handleAiAnalyze = async () => {
+  //   if (!aiMealDescription.trim()) return;
+  //   setIsAnalyzing(true);
+  //   setMealName(aiMealDescription);
+  //
+  //   const prompt = `You are a nutrition expert for Ghanaian food. Analyze the following meal description and provide a reasonable estimate for its calories and protein. The user is a 55kg male trying to build muscle. Meal: "${aiMealDescription}". Respond with only a JSON object with "calories" (number) and "protein" (number) keys.`;
+  //
+  //   const nutritionSchema = {
+  //     type: "OBJECT",
+  //     properties: {
+  //       calories: { type: "NUMBER" },
+  //       protein: { type: "NUMBER" }
+  //     },
+  //     required: ["calories", "protein"]
+  //   };
+  //
+  //   try {
+  //     const result = await callGemini(prompt, nutritionSchema);
+  //     const parsedResult = JSON.parse(result);
+  //     setCalories(parsedResult.calories.toString());
+  //     setProtein(parsedResult.protein.toString());
+  //     onSuccess('AI analysis complete! Review and confirm the nutrition values.');
+  //   } catch (error) {
+  //     console.error('AI analysis error:', error);
+  //     onSuccess('AI analysis failed. Please enter values manually.');
+  //   } finally {
+  //     setIsAnalyzing(false);
+  //   }
+  // };
   const handleAiAnalyze = async () => {
     if (!aiMealDescription.trim()) return;
+
     setIsAnalyzing(true);
     setMealName(aiMealDescription);
 
-    const prompt = `You are a nutrition expert for Ghanaian food. Analyze the following meal description and provide a reasonable estimate for its calories and protein. The user is a 55kg male trying to build muscle. Meal: "${aiMealDescription}". Respond with only a JSON object with "calories" (number) and "protein" (number) keys.`;
-
+    // const prompt = `You are a nutrition expert for Ghanaian food. Analyze the following meal description and provide a reasonable estimate for its calories and protein. The user is a 55kg male trying to build muscle. Meal: "${aiMealDescription}". Respond with only a JSON object with "calories" (number) and "protein" (number) keys.`;
+    const prompt = `You are a certified nutrition expert specializing in Ghanaian cuisine. Analyze this meal for a 55kg male building muscle: "${aiMealDescription}". Consider traditional preparation methods, typical Ghanaian portion sizes, and common ingredients. Be accurate - foods like plain rice have minimal protein. Respond with only a JSON object: {"calories": number, "protein": number}. Round to 1 decimal place.`;
     const nutritionSchema = {
       type: "OBJECT",
       properties: {
@@ -79,9 +109,22 @@ export const DietTracker: React.FC<DietTrackerProps> = ({ setView, onSuccess }) 
 
     try {
       const result = await callGemini(prompt, nutritionSchema);
-      const parsedResult = JSON.parse(result);
-      setCalories(parsedResult.calories.toString());
-      setProtein(parsedResult.protein.toString());
+
+      // Use regex to extract first valid JSON object
+      const match = result.match(/{[\s\S]*?}/);
+      if (!match) throw new Error("AI did not return valid JSON");
+
+      const parsedResult = JSON.parse(match[0]);
+
+      // Validate fields are numbers
+      const { calories, protein } = parsedResult;
+      if (typeof calories !== "number" || typeof protein !== "number") {
+        throw new Error("Missing or invalid 'calories' or 'protein' in response");
+      }
+
+      setCalories(calories.toString());
+      setProtein(protein.toString());
+
       onSuccess('AI analysis complete! Review and confirm the nutrition values.');
     } catch (error) {
       console.error('AI analysis error:', error);

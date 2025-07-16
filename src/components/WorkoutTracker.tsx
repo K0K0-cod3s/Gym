@@ -948,24 +948,52 @@ export const WorkoutTracker: React.FC<WorkoutTrackerProps> = ({ setView, onSucce
     return () => unsubscribe();
   }, [userId, today]);
 
+  // const generateWorkout = async (workoutType: WorkoutType) => {
+  //   setGeneratingId(workoutType.id);
+  //   const prompt = `Create a ${workoutType.name.toLowerCase()} workout for a 55kg male beginner-intermediate level. Focus on: ${workoutType.muscles.join(', ')}. Return exactly 5-6 exercises in this JSON format: {"exercises": [{"name": "Exercise Name", "sets": 3, "reps": "8-12", "muscle_group": "Primary Muscle", "instructions": "Clear, concise instructions for proper form and execution"}]}. Make exercises suitable for home/gym with basic equipment. Focus on compound movements and proper progression.`;
+  //
+  //   try {
+  //     const result = await callGemini(prompt);
+  //     // Basic validation to prevent crash on invalid JSON
+  //     if (!result.startsWith('{') || !result.endsWith('}')) {
+  //       throw new Error('Invalid response format from AI.');
+  //     }
+  //     const workoutData = JSON.parse(result);
+  //
+  //     if (workoutData.exercises && workoutData.exercises.length > 0) {
+  //       startWorkout(workoutData.exercises);
+  //       onSuccess(`🔥 ${workoutType.name} workout generated! ${workoutData.exercises.length} exercises ready.`);
+  //     } else {
+  //       throw new Error('Invalid workout data received');
+  //     }
+  //   } catch (error) {
+  //     console.error('Workout generation error:', error);
+  //     onSuccess('❌ Failed to generate workout. Please try again.');
+  //   } finally {
+  //     setGeneratingId(null);
+  //   }
+  // };
   const generateWorkout = async (workoutType: WorkoutType) => {
     setGeneratingId(workoutType.id);
-    const prompt = `Create a ${workoutType.name.toLowerCase()} workout for a 55kg male beginner-intermediate level. Focus on: ${workoutType.muscles.join(', ')}. Return exactly 5-6 exercises in this JSON format: {"exercises": [{"name": "Exercise Name", "sets": 3, "reps": "8-12", "muscle_group": "Primary Muscle", "instructions": "Clear, concise instructions for proper form and execution"}]}. Make exercises suitable for home/gym with basic equipment. Focus on compound movements and proper progression.`;
+
+    const prompt = `Create a ${workoutType.name.toLowerCase()} workout for a 55kg male beginner-intermediate level. Focus on: ${workoutType.muscles.join(', ')}. Return exactly 5-6 exercises in this JSON format: {"exercises": [{"name": "Exercise Name", "sets": 3, "reps": "8-12", "muscle_group": "Primary Muscle", "instructions": "Clear, concise instructions for proper form and execution"}]}. Make exercises suitable for home/gym with basic equipment. Focus on compound movements and proper progression. Respond with only valid JSON.`
 
     try {
       const result = await callGemini(prompt);
-      // Basic validation to prevent crash on invalid JSON
-      if (!result.startsWith('{') || !result.endsWith('}')) {
-        throw new Error('Invalid response format from AI.');
-      }
-      const workoutData = JSON.parse(result);
 
-      if (workoutData.exercises && workoutData.exercises.length > 0) {
+      // Extract JSON safely from the result
+      const match = result.match(/{[\s\S]*}/); // greedy match to get full JSON block
+      if (!match) throw new Error("No JSON found in AI response.");
+
+      const workoutData = JSON.parse(match[0]);
+
+      if (workoutData.exercises && Array.isArray(workoutData.exercises) && workoutData.exercises.length > 0) {
         startWorkout(workoutData.exercises);
         onSuccess(`🔥 ${workoutType.name} workout generated! ${workoutData.exercises.length} exercises ready.`);
       } else {
-        throw new Error('Invalid workout data received');
+        throw new Error('Invalid workout data structure.');
       }
+
     } catch (error) {
       console.error('Workout generation error:', error);
       onSuccess('❌ Failed to generate workout. Please try again.');
