@@ -7,6 +7,9 @@ import { Analytics } from './components/Analytics';
 import { SuccessNotification } from './components/SuccessNotification';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { useAuth } from './hooks/useAuth';
+import { SpeedInsights } from "@vercel/speed-insights/react";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+
 
 function App() {
   const [view, setView] = useState('dashboard');
@@ -64,6 +67,11 @@ function App() {
             isVisible={showSuccess}
             onClose={hideSuccessNotification}
           />
+
+          <div>
+              {/* ... */}
+              <SpeedInsights />
+          </div>
           
           {/* Subtle background pattern */}
           <div className="fixed inset-0 opacity-5 pointer-events-none">
@@ -74,6 +82,8 @@ function App() {
             }}></div>
           </div>
       </div>
+        {/* Vercel Analytics */}
+        <VercelAnalytics />
     </ThemeProvider>
   );
 }

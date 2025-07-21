@@ -7,7 +7,6 @@ import { ViewHeader } from './ViewHeader';
 import { Card } from './Card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Calendar, Dumbbell, Utensils, Target, Award, Flame, Activity, Trophy, Zap } from 'lucide-react';
-
 interface AnalyticsProps {
   setView: (view: string) => void;
 }
